@@ -1,0 +1,31 @@
+# Maven
+target/
+*.class
+*.jar
+
+# Playwright
+playwright-report/
+test-results/
+trace.zip
+
+# Logs
+*.log
+
+# IDEs
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Node (Playwright Java uses Node internally)
+node_modules/
+
+# Allure
+.allure/
+allure-results/
+allure-report/
+target/
+
+# Performance test results
+performance-tests/results/
