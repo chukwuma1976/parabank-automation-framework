@@ -10,35 +10,19 @@ Feature: User Login
         When method get    
         Then status 200
 
-    Scenario: Login with valid username and invalid password
-        Given path '/login', username, 'invalidpassword'
+    Scenario Outline: Login with combinations of valid and invalid usernames and passwords
+        Given path '/login', <username>, <password>
         When method get    
-        Then status 400
+        Then status <status>
 
-    Scenario: Login with invalid username and valid password
-        Given path '/login', 'invaliduser', password
-        When method get    
-        Then status 400
-
-    Scenario: Login with invalid username and invalid password
-        Given path '/login', 'invaliduser', 'invalidpassword'
-        When method get    
-        Then status 400
-
-    Scenario: Login with valid username and blank password
-        Given path '/login', username, ''
-        When method get    
-        Then status 404
-
-    Scenario: Login with blank username and valid password
-        Given path '/login', '', password
-        When method get    
-        Then status 404
-
-    Scenario: Login with blank username and blank password
-        Given path '/login','', ''
-        When method get    
-        Then status 404
+        Examples:
+            | username       | password              | status |
+            | 'logintester'  | 'invalidpassword'     | 400    |
+            | 'invaliduser'  | 'logintesterpassword' | 400    |
+            | 'invaliduser'  | 'invalidpassword'     | 400    |
+            | 'logintester'  | ''                    | 404    |
+            | ''             | 'logintesterpassword' | 404    |
+            | ''             | ''                    | 404    |
 
     Scenario: Login with valid username and valid password but with wrong HTTP method (POST instead of GET)
         Given path '/login', username, password
