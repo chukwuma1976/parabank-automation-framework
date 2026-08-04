@@ -30,6 +30,13 @@
         <version>7.10.2</version>
         <scope>test</scope>
     </dependency>
+    <!-- Karate -->
+    <dependency>
+      <groupId>com.intuit.karate</groupId>
+      <artifactId>karate-junit5</artifactId>
+      <version>1.4.1</version>
+      <scope>test</scope>
+  </dependency>
 
     <!-- Rest Assured -->
     <dependency>
@@ -60,12 +67,12 @@
         <version>2.24.0</version>
     </dependency>
     <!-- JUnit (optional, since you're exploring both) -->
-    <!-- <dependency>
+    <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
         <version>5.10.2</version>
         <scope>test</scope>
-    </dependency> -->
+    </dependency>
     <!-- Cucumber -->
     <dependency>
         <groupId>io.cucumber</groupId>
@@ -81,6 +88,17 @@
   </dependencies>
 
   <build>
+    <testResources>
+        <testResource>
+            <directory>src/test/java</directory>
+            <includes>
+                <include>**/*.feature</include>
+            </includes>
+        </testResource>
+        <testResource>
+            <directory>src/test/resources</directory>
+        </testResource>
+    </testResources>  
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
@@ -98,8 +116,9 @@
           <version>3.8.0</version>
         </plugin>
         <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.2.5</version> <!-- Upgraded to modern Surefire for seamless JUnit 5 + TestNG support -->
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
