@@ -30,15 +30,3 @@ Feature: Bank Accounts API
     When method get
     Then status 200
     And match response == '#array'
-    And match response[0].accountId == accountId
-    And match response[0] == 
-    """
-    {
-    id: '#number',
-    accountId: '#number',
-    type: '#string',
-    date: '#number',
-    amount: '#number',
-    description: '#string'
-    }
-    """

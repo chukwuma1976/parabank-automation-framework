@@ -2,8 +2,8 @@ Feature: User Login
 
     Background:
         * url 'https://parabank.parasoft.com/parabank/services/bank'
-        * def username = 'logintester'
-        * def password = 'logintesterpassword'
+        * def username = 'john'
+        * def password = 'demo'
         
     Scenario: Login with valid username and password
         Given path '/login', username, password

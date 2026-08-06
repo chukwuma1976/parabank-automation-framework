@@ -2,9 +2,9 @@ Feature: Test Customers API
 
   Background:
     * url 'https://parabank.parasoft.com/parabank/services/bank'
-    * def customerId = 13322
-    * def customerId2 = 12212
-  Scenario: Get customer caccounts by customer id
+    * def customerId = 12212
+    * configure afterScenario = function(){ karate.call('classpath:api/cleanup.feature') }
+  Scenario: Get customer accounts by customer id
     Given path 'customers', customerId, 'accounts'
     And header Accept = 'application/json'
     When method get
@@ -45,12 +45,12 @@ Feature: Test Customers API
     """
 
   Scenario: Get customer positions
-    Given path 'customers', customerId2, 'positions'
+    Given path 'customers', customerId, 'positions'
     And header Accept = 'application/json'
     When method get
     Then status 200
     And match response == '#array'
-    And match response[0].customerId == customerId2
+    And match response[0].customerId == customerId
     And match response[0] ==
     """
     {
