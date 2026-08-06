@@ -2,7 +2,7 @@ Feature: Test Customers API
 
   Background:
     * url 'https://parabank.parasoft.com/parabank/services/bank'
-    * def customerId = 21758
+    * def customerId = 13322
     * def customerId2 = 12212
   Scenario: Get customer caccounts by customer id
     Given path 'customers', customerId, 'accounts'
@@ -62,4 +62,13 @@ Feature: Test Customers API
         purchasePrice: '#number'
     }
     """
+
+  Scenario: Update customer information
+    Given path 'customers/update', customerId
+    And header Accept = 'application/json'
+    And header Content-Type = 'application/json'
+    And params { firstName: 'Calvin', lastName: 'Ellis', street: '1300 Pennsylvania Avenue', city: 'Washington', state: 'DC', zipCode: '12345', phoneNumber: '1-800-555-1234', ssn: '123-45-6789', username: 'logintester', password: 'logintesterpassword'}
+    When method post
+    Then status 200
+    And match response == 'Successfully updated customer profile'
     
