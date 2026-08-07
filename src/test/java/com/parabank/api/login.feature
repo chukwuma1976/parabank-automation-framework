@@ -1,7 +1,7 @@
 Feature: User Login
 
     Background:
-        * url 'https://parabank.parasoft.com/parabank/services/bank'
+        * url baseUrl
         * def username = 'john'
         * def password = 'demo'
         

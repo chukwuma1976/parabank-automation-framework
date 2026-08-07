@@ -1,7 +1,7 @@
 Feature: Test Customers API
 
   Background:
-    * url 'https://parabank.parasoft.com/parabank/services/bank'
+    * url baseUrl
     * def customerId = 12212
     * configure afterScenario = function(){ karate.call('classpath:api/cleanup.feature') }
   Scenario: Get customer accounts by customer id

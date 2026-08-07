@@ -1,7 +1,7 @@
 Feature: Common Bank Operations API
 
   Background:
-    * url 'https://parabank.parasoft.com/parabank/services/bank'
+    * url baseUrl
 
   Scenario:
     Given path 'cleanDB'

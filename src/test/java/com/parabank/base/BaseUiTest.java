@@ -1,4 +1,4 @@
-package test.base;
+package com.parabank.base;
 
 import java.io.ByteArrayInputStream;
 import java.time.Duration;

@@ -1,7 +1,7 @@
 Feature: Common Bank Operations API
 
   Background:
-    * url 'https://parabank.parasoft.com/parabank/services/bank'
+    * url baseUrl
     * def customerId = 12212
     * def accountId = 13344
     * def months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']

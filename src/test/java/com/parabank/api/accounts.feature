@@ -1,7 +1,7 @@
 Feature: Bank Accounts API
 
   Background:
-    * url 'https://parabank.parasoft.com/parabank/services/bank'
+    * url baseUrl
     * def accountId = 13344
     * def customerId = 12212
   Scenario: Get accounts by account ID

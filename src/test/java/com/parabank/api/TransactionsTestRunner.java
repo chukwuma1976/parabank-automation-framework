@@ -1,4 +1,4 @@
-package api;
+package com.parabank.api;
 
 import com.intuit.karate.junit5.Karate;
 
