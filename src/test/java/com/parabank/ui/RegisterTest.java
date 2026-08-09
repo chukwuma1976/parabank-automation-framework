@@ -9,6 +9,8 @@ import com.parabank.model.Customer;
 import com.parabank.pages.RegistrationPage;
 import com.parabank.pages.UpdateProfilePage;
 
+import utils.DataControl;
+
 public class RegisterTest extends BaseUiTest {
 
     @Test(groups = { "ui", "regression" })
@@ -33,11 +35,14 @@ public class RegisterTest extends BaseUiTest {
 
         System.out.println("LANDING_PAGE_URL: " + ConfigReader.get("LANDING_PAGE_URL"));
         driver.get(ConfigReader.get("LANDING_PAGE_URL"));
+
         registrationPage.clickRegistrationLink();
         registrationPage.fillRegistrationForm(customer);
         registrationPage.clickRegisterButton();
         registrationPage.dismissModalIfPresent();
         leftNavComponent.clickUpdateContactInfo();
         updateProfilePage.confirmPresenceOfValuesInInputFields(customer);
+
+        DataControl.resetData();
     }
 }

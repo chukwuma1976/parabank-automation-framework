@@ -54,8 +54,8 @@ public class LeftNavComponent {
         clickLink("Log Out");
     }
 
-    public List<By> getAllLinks() {
-        return links.stream().map(By::linkText).toList();
+    public List<WebElement> getAllLinks() {
+        return links.stream().map(link -> driver.findElement(By.linkText(link))).toList();
     }
 
     private void clickLink(String linkText) {
