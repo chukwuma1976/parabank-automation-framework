@@ -39,4 +39,8 @@ public class LoginPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessageLocator));
         assert (driver.findElement(errorMessageLocator)).isDisplayed();
     }
+
+    public void confirmLoginPageURL() {
+        assert (driver.getCurrentUrl()).contains("index.htm");
+    }
 }

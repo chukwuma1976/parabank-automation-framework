@@ -12,6 +12,7 @@ import static io.restassured.RestAssured.given;
 
 import utils.DataControl;
 import utils.TestDataGenerator;
+import utils.BankActions;
 
 public class TransactionsTest extends BaseApiTest {
     private String baseURL = ConfigReader.get("BASE_API_URL");
@@ -23,7 +24,7 @@ public class TransactionsTest extends BaseApiTest {
     @BeforeMethod
     public void setUp() {
         DataControl.resetData();
-        initialBalance = getBalance(accountId);
+        initialBalance = BankActions.getBalance(accountId);
     }
 
     @Test(groups = { "ui", "regression" })
@@ -47,7 +48,7 @@ public class TransactionsTest extends BaseApiTest {
         assert (billPayment.jsonPath().getInt("accountId") == accountId);
         assert (billPayment.jsonPath().getDouble("amount") == amountToPay);
 
-        Double finalBalance = getBalance(accountId);
+        double finalBalance = BankActions.getBalance(accountId);
         int difference = (int) Math.abs(initialBalance - finalBalance);
 
         assert (difference == amountToPay);
@@ -69,7 +70,7 @@ public class TransactionsTest extends BaseApiTest {
                 .extract().response();
 
         assert (depositStatement.asString()).equals(expectedResponse);
-        Double finalBalance = getBalance(accountId);
+        double finalBalance = BankActions.getBalance(accountId);
         int difference = (int) Math.abs(initialBalance - finalBalance);
 
         assert (difference == amountToDeposit);
@@ -91,7 +92,7 @@ public class TransactionsTest extends BaseApiTest {
                 .extract().response();
 
         assert (withdrawalStatement.asString()).equals(expectedResponse);
-        Double finalBalance = getBalance(accountId);
+        double finalBalance = BankActions.getBalance(accountId);
         int difference = (int) Math.abs(initialBalance - finalBalance);
 
         assert (difference == amountToWithdraw);
@@ -114,8 +115,18 @@ public class TransactionsTest extends BaseApiTest {
         assert (savingsAccount.jsonPath().getInt("customerId") == customerId);
         assert (savingsAccount.jsonPath().get("type")).equals("SAVINGS");
 
-        double initialSavingsBalance = savingsAccount.jsonPath().getDouble("balance");
         int savingsAccountId = savingsAccount.jsonPath().getInt("id");
+        /*
+         * Get initial balance after the transfer. $90 is automatically added in an
+         * operation after creating a new account.
+         * Therefore the initial balance will be $90 NOT $0 for a newly created account,
+         * This $90 is withdrawn from the origin account so the new balce for that
+         * account need to be retrieved.
+         */
+        double initialSavingsBalance = BankActions.getBalance(savingsAccountId); // initial balance with $90 minimum
+                                                                                 // balance
+        double newInitialCheckingBalance = BankActions.getBalance(accountId); // new intial account balance for origin
+                                                                              // account
 
         int amountToTransfer = 2000;
         String expectedResponse = "Successfully transferred $" + amountToTransfer + " from account #" + accountId
@@ -134,29 +145,18 @@ public class TransactionsTest extends BaseApiTest {
         transferStatement.prettyPrint();
         assert (transferStatement.asString()).equals(expectedResponse);
 
-        // double finalCheckingBalance = getBalance(accountId);
-        // int checkingAcctDiff = (int) Math.abs(initialBalance - finalCheckingBalance);
-        // assert (checkingAcctDiff == amountToTransfer);
+        double finalCheckingBalance = BankActions.getBalance(accountId);
+        int checkingAcctDiff = (int) Math.abs(newInitialCheckingBalance - finalCheckingBalance);
+        assert (checkingAcctDiff == amountToTransfer);
 
-        // double finalSavingsBalance = getBalance(savingsAccountId);
-        // int savingsAccountDiff = (int) Math.abs(initialSavingsBalance -
-        // finalSavingsBalance);
-        // assert (savingsAccountDiff == amountToTransfer);
+        double finalSavingsBalance = BankActions.getBalance(savingsAccountId);
+        System.out.println(finalSavingsBalance);
+        int savingsAccountDiff = (int) Math.abs(initialSavingsBalance -
+                finalSavingsBalance);
+        assert (savingsAccountDiff == amountToTransfer);
 
     }
 
-    private double getBalance(int accountId) {
-        Response response = given()
-                .baseUri(baseURL)
-                .headers("Accept", "application/json")
-                .when()
-                .get("/accounts/" + accountId)
-                .then()
-                .statusCode(200)
-                .extract().response();
-
-        return response.jsonPath().getDouble("balance");
-    }
 }
 
 /*
