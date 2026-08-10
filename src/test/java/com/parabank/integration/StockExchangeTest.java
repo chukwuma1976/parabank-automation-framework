@@ -1,5 +1,6 @@
 package com.parabank.integration;
 
+import static org.testng.Assert.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -51,9 +52,10 @@ public class StockExchangeTest {
         double afterStockPurchaseBalance = BankActions.getBalance(accountId);
         int changeInBalance = (int) (initialBalance - afterStockPurchaseBalance);
 
-        assert (changeInBalance == moneyPaidForStock);
+        assertEquals(changeInBalance, moneyPaidForStock);
 
-        int positionId = stockPurchase.jsonPath().get("[1].positionId");
+        int positionId = stockPurchase.jsonPath()
+                .getInt("find { it.symbol == '" + stockName + "' }.positionId");
         System.out.println(positionId);
 
         // Sell 100 shares of stock at $20/share
@@ -75,7 +77,7 @@ public class StockExchangeTest {
         double afterStockSaleBalance = BankActions.getBalance(accountId);
         int nextChangeInBalance = (int) (afterStockSaleBalance - afterStockPurchaseBalance);
 
-        assert (nextChangeInBalance == moneyEarnedFromStock);
+        assertEquals(nextChangeInBalance, moneyEarnedFromStock);
     }
 
 }
