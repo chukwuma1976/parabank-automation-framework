@@ -4,6 +4,8 @@ import com.parabank.config.ConfigReader;
 
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
+import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 
 public class BankActions {
     private static String baseURL = ConfigReader.get("BASE_API_URL");
@@ -20,4 +22,22 @@ public class BankActions {
 
         return response.jsonPath().getDouble("balance");
     }
+
+    public static JsonPath createNewAccount(int accountListIndex) {
+        String baseURL = ConfigReader.get("BASE_API_URL");
+        Response response = given()
+                .baseUri(baseURL)
+                .queryParam("customerId", TestDataGenerator.getCustomerId())
+                .queryParam("newAccountType", accountListIndex)
+                .queryParam("fromAccountId", TestDataGenerator.getAccountId())
+                .accept(ContentType.JSON)
+                .when()
+                .post("/createAccount")
+                .then()
+                .statusCode(200)
+                .extract().response();
+
+        return response.jsonPath();
+    }
+
 }

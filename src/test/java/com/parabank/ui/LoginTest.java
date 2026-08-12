@@ -8,11 +8,13 @@ import com.parabank.model.Customer;
 import com.parabank.pages.LandingPage;
 import com.parabank.pages.LoginPage;
 
+import utils.TestDataGenerator;
+
 public class LoginTest extends BaseUiTest {
 
     @Test(groups = { "ui", "smoke" })
     public void login() {
-        Customer customer = new Customer("john", "demo");
+        Customer customer = TestDataGenerator.getLoginCustomer();
         LandingPage landingPage = new LandingPage(driver);
 
         driver.get(ConfigReader.get("LANDING_PAGE_URL"));

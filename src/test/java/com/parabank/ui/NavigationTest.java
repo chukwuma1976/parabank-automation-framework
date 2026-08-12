@@ -11,13 +11,15 @@ import com.parabank.config.ConfigReader;
 import com.parabank.model.Customer;
 import com.parabank.pages.LoginPage;
 
+import utils.TestDataGenerator;
+
 public class NavigationTest extends BaseUiTest {
 
     LeftNavComponent navComponent;
 
     @BeforeMethod
     public void setUp() {
-        Customer customer = new Customer("john", "demo");
+        Customer customer = TestDataGenerator.getLoginCustomer();
         navComponent = new LeftNavComponent(driver);
         driver.get(ConfigReader.get("LANDING_PAGE_URL"));
         new LoginPage(driver).loginCustomer(customer);
