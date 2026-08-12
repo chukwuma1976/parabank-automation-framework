@@ -1,7 +1,11 @@
 package utils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.parabank.model.Customer;
 
@@ -40,6 +44,23 @@ public class TestDataGenerator {
 
     public static Customer getLoginCustomer() {
         return new Customer("john", "demo");
+    }
+
+    public static String getTodaysDateFormatted() {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        return today.format(formatter);
+    }
+
+    public static String getCurrentMonthName() {
+        LocalDate today = LocalDate.now();
+        return today.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+    }
+
+    public static String getAnyDaysFromNowFormatted(int days) {
+        LocalDate today = LocalDate.now().plusDays(days);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        return today.format(formatter);
     }
 
 }

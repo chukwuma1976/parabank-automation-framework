@@ -118,18 +118,16 @@ public class TransactionsTest extends BaseApiTest {
 
                 int savingsAccountId = savingsAccount.jsonPath().getInt("id");
                 /*
-                 * Get initial balance after the transfer. $90 is automatically added in an
-                 * operation after creating a new account.
-                 * Therefore the initial balance will be $90 NOT $0 for a newly created account,
-                 * This $90 is withdrawn from the origin account so the new balce for that
+                 * Get initial balance after the transfer. A minimum required balance is
+                 * automatically added in an operation after creating a new account.
+                 * Therefore the initial balance will be the minimum balance NOT $0 for a newly
+                 * created account,
+                 * This minimum balance is withdrawn from the origin account so the new balance
+                 * for that
                  * account need to be retrieved.
                  */
-                double initialSavingsBalance = BankActions.getBalance(savingsAccountId); // initial balance with $90
-                                                                                         // minimum
-                                                                                         // balance
-                double newInitialCheckingBalance = BankActions.getBalance(accountId); // new intial account balance for
-                                                                                      // origin
-                                                                                      // account
+                double initialSavingsBalance = BankActions.getBalance(savingsAccountId);
+                double newInitialCheckingBalance = BankActions.getBalance(accountId);
 
                 int amountToTransfer = 2000;
                 String expectedResponse = "Successfully transferred $" + amountToTransfer + " from account #"
@@ -146,7 +144,7 @@ public class TransactionsTest extends BaseApiTest {
                                 .then()
                                 .statusCode(200)
                                 .extract().response();
-   
+
                 assertEquals(transferStatement.asString(), expectedResponse);
 
                 double finalCheckingBalance = BankActions.getBalance(accountId);
