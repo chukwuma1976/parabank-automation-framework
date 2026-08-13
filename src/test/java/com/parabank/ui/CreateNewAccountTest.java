@@ -64,7 +64,6 @@ public class CreateNewAccountTest extends BaseUiTest {
 
     @Test(dataProvider = "newAccounts", groups = { "ui", "regression" })
     public void createAccounts(String accountType, int accountId) {
-        System.out.println(accountType + " : " + accountId);
         landingPage.verifyAccountNumber(accountId);
         landingPage.gotoAccountNumber(accountId);
 

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.parabank.model.Account;
+import com.parabank.model.AuthenticatedUser;
 import com.parabank.model.Customer;
 
 public class TestDataGenerator {
@@ -46,6 +48,25 @@ public class TestDataGenerator {
         return new Customer("john", "demo");
     }
 
+    public static Customer generateCustomer() {
+        String username = "UN" + System.currentTimeMillis();
+        String password = "PW" + System.currentTimeMillis();
+
+        Customer customer = new Customer(
+                "Calvin",
+                "Ellis",
+                "1600 Pensylvania Ave",
+                "Washington",
+                "DC",
+                "20010",
+                "1-800-123-4567",
+                "123-45-6789",
+                username,
+                password);
+
+        return customer;
+    }
+
     public static String getTodaysDateFormatted() {
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
@@ -61,6 +82,18 @@ public class TestDataGenerator {
         LocalDate today = LocalDate.now().plusDays(days);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         return today.format(formatter);
+    }
+
+    public static Customer getCustomerData(AuthenticatedUser authUser) {
+        return authUser.getCustomer();
+    }
+
+    public static Account getCustomerBaseAccount(AuthenticatedUser authUser) {
+        String username = authUser.getCustomer().getUsername();
+        String password = authUser.getCustomer().getPassword();
+
+        int customerId = AccountApi.getCustomerId(username, password);
+        return AccountApi.getFirstAccount(customerId);
     }
 
 }

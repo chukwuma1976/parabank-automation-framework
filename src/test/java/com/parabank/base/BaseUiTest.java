@@ -4,7 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.time.Duration;
 
 import io.qameta.allure.Allure;
+import utils.RegistrationApi;
+import utils.TestDataGenerator;
 
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -18,6 +21,10 @@ import org.slf4j.MDC;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+
+import com.parabank.config.ConfigReader;
+import com.parabank.model.AuthenticatedUser;
+import com.parabank.model.Customer;
 
 public class BaseUiTest {
 
@@ -95,5 +102,34 @@ public class BaseUiTest {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    protected AuthenticatedUser loginAsNewUser() {
+        Customer customer = TestDataGenerator.generateCustomer(); // unique username/password per call
+
+        AuthenticatedUser authUser = RegistrationApi.registerAndAuthenticate(customer);
+
+        String baseUiUrl = ConfigReader.get("BASE_UI_URL");
+        java.net.URI uri = java.net.URI.create(baseUiUrl);
+
+        driver.get(baseUiUrl + "/index.htm");
+        driver.manage().deleteAllCookies();
+
+        Cookie sessionCookie = new Cookie.Builder("JSESSIONID", authUser.getSessionId())
+                .domain(uri.getHost())
+                .path("/parabank")
+                .isSecure(uri.getScheme().equals("https"))
+                .build();
+
+        driver.manage().addCookie(sessionCookie);
+        driver.navigate().refresh();
+        driver.get(baseUiUrl + "/overview.htm");
+
+        if (driver.getPageSource().contains("Customer Login")) {
+            throw new RuntimeException(
+                    "Session cookie injection failed — still on login page for user: " + customer.getUsername());
+        }
+
+        return authUser;
     }
 }

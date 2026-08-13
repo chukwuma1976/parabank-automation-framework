@@ -46,16 +46,20 @@ public class BankActions {
         return response.jsonPath();
     }
 
-    public static void depositMoney(double money) {
+    public static void depositMoney(int accountId, double money) {
         given()
                 .baseUri(baseURL)
-                .queryParam("accountId", TestDataGenerator.getAccountId())
+                .queryParam("accountId", accountId)
                 .queryParam("amount", money)
                 .when()
                 .post("/deposit")
                 .then()
                 .statusCode(200)
                 .extract().response();
+    }
+
+    public static void depositMoney(double money) {
+        depositMoney(TestDataGenerator.getAccountId(), money);
     }
 
     public static void withdrawMoney(double money) {

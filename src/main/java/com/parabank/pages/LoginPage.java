@@ -26,7 +26,6 @@ public class LoginPage {
     }
 
     public void loginCustomer(Customer customer) {
-        System.out.println(customer);
         wait.until(ExpectedConditions.visibilityOfElementLocated(loginPanel));
         WebElement loginForm = driver.findElement(loginPanel);
         loginForm.findElement(usernameInput).sendKeys(customer.getUsername());

@@ -1,24 +1,27 @@
 package utils;
 
+import com.parabank.config.ConfigReader;
+import com.parabank.model.AuthenticatedUser;
+import com.parabank.model.Customer;
 import io.restassured.filter.session.SessionFilter;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
 
-import com.parabank.model.Customer;
-
 public class RegistrationApi {
 
-    private static final String BASE_URL = "https://parabank.parasoft.com/parabank";
+    private static final String BASE_URL = ConfigReader.get("BASE_UI_URL"); // note that this is not the api URL
 
-    public static Response registerUser(Customer customer, SessionFilter sessionFilter) {
-        // Step 1: establish session
+    public static AuthenticatedUser registerAndAuthenticate(Customer customer) {
+        SessionFilter sessionFilter = new SessionFilter();
+
+        // Step 1: establish session (server binds registration state to this session)
         given()
                 .baseUri(BASE_URL)
                 .filter(sessionFilter)
                 .get("/register.htm");
 
         // Step 2: submit registration on the same session
-        return given()
+        Response response = given()
                 .baseUri(BASE_URL)
                 .filter(sessionFilter)
                 .contentType("application/x-www-form-urlencoded")
@@ -37,5 +40,16 @@ public class RegistrationApi {
                 .when()
                 .redirects().follow(false)
                 .post("/register.htm");
+
+        String sessionId = sessionFilter.getSessionId();
+        String body = response.getBody().asString();
+
+        if (sessionId == null || !body.contains("Your account was created successfully")) {
+            throw new RuntimeException(
+                    "Registration failed. Status: " + response.getStatusCode() + ", Body: " + body);
+        }
+
+        AccountApi.seedFirstAccountWithMoney(customer, 10000);
+        return new AuthenticatedUser(customer, sessionId);
     }
 }

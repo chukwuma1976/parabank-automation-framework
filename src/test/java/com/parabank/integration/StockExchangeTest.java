@@ -57,7 +57,6 @@ public class StockExchangeTest extends BaseApiTest {
 
         int positionId = stockPurchase.jsonPath()
                 .getInt("find { it.symbol == '" + stockName + "' }.positionId");
-        System.out.println(positionId);
 
         // Sell 100 shares of stock at $20/share
         String stockSalePath = "customers/" + customerId + "/sellPosition";
