@@ -4,83 +4,70 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
 import com.parabank.base.BaseUiTest;
 import com.parabank.config.ConfigReader;
-import com.parabank.model.Customer;
+import com.parabank.model.Account;
+import com.parabank.model.AuthenticatedUser;
 import com.parabank.pages.AccountDetailsPage;
 import com.parabank.pages.LandingPage;
-import com.parabank.pages.LoginPage;
 
-import io.restassured.path.json.JsonPath;
+import utils.AccountApi;
 import utils.BankActions;
-import utils.DataControl;
 import utils.TestDataGenerator;
 
 public class CreateNewAccountTest extends BaseUiTest {
-    // String baseURL = ConfigReader.get("BASE_API_URL");
-    int customerId = TestDataGenerator.getCustomerId();
-    int accountId = TestDataGenerator.getAccountId();
-    List<JsonPath> createdAccounts = new ArrayList<>();
-    SoftAssert softly = new SoftAssert();
 
-    LoginPage loginPage;
-    LandingPage landingPage;
-    AccountDetailsPage accountDetailsPage;
-
-    @BeforeSuite
-    public void reset() {
-        DataControl.resetData();
-        createdAccounts = createAPIAccounts();
-    }
+    private LandingPage landingPage;
+    private AccountDetailsPage accountDetailsPage;
+    private List<Account> createdAccounts;
+    private SoftAssert softly;
 
     @BeforeMethod
-    public void addAccounts() {
+    public void setup() {
+        AuthenticatedUser authUser = loginAsNewUser(); // fresh user, browser already authenticated, first account
+                                                       // already seeded with $10,000
 
-        Customer customer = TestDataGenerator.getLoginCustomer();
-        loginPage = new LoginPage(driver);
-        landingPage = new LandingPage(driver);
-        accountDetailsPage = new AccountDetailsPage(driver);
+        int customerId = AccountApi.getCustomerId(
+                authUser.getCustomer().getUsername(),
+                authUser.getCustomer().getPassword());
 
-        driver.get(ConfigReader.get("LANDING_PAGE_URL"));
-        loginPage.loginCustomer(customer);
+        Account fundedAccount = AccountApi.getFirstAccount(customerId); // the seeded account — used as the source for
+                                                                        // new-account creation
+
+        createdAccounts = createAccountsForCustomer(customerId, fundedAccount.getId());
+
+        landingPage = new LandingPage(getDriver());
+        accountDetailsPage = new AccountDetailsPage(getDriver());
+        softly = new SoftAssert();
     }
 
-    @DataProvider(name = "newAccounts")
-    public Object[][] newAccounts() {
-        JsonPath checking = createdAccounts.get(0);
-        JsonPath savings = createdAccounts.get(1);
-        JsonPath loan = createdAccounts.get(2);
-        return new Object[][] {
-                { checking.get("type"), checking.get("id") },
-                { savings.get("type"), savings.get("id") },
-                { loan.get("type"), loan.get("id") }
-        };
-    }
+    @Test(groups = { "ui", "regression" })
+    public void createAccounts() {
+        for (Account account : createdAccounts) {
+            getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
 
-    @Test(dataProvider = "newAccounts", groups = { "ui", "regression" })
-    public void createAccounts(String accountType, int accountId) {
-        landingPage.verifyAccountNumber(accountId);
-        landingPage.gotoAccountNumber(accountId);
+            String accountType = account.getType();
+            int accountId = account.getId();
+            landingPage.verifyAccountNumber(accountId);
+            landingPage.gotoAccountNumber(accountId);
 
-        double balance = BankActions.getBalance(accountId);
-        softly.assertTrue(accountDetailsPage.verifyAccountNumber(accountId));
-        softly.assertTrue(accountDetailsPage.verifyAccountType(accountType));
-        softly.assertTrue(accountDetailsPage.verifyBalance(balance));
-        softly.assertTrue(accountDetailsPage.verifyAvailableBalance(balance));
+            double balance = BankActions.getBalance(accountId);
+            softly.assertTrue(accountDetailsPage.verifyAccountNumber(accountId));
+            softly.assertTrue(accountDetailsPage.verifyAccountType(accountType));
+            softly.assertTrue(accountDetailsPage.verifyBalance(balance));
+            softly.assertTrue(accountDetailsPage.verifyAvailableBalance(balance));
+        }
         softly.assertAll();
     }
 
-    private List<JsonPath> createAPIAccounts() {
-        List<JsonPath> accounts = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            accounts.add(BankActions.createNewAccount(i));
+    private List<Account> createAccountsForCustomer(int customerId, int fromAccountId) {
+        List<Account> accounts = new ArrayList<>();
+        for (int i = 0; i < TestDataGenerator.getAccountTypes().size(); i++) {
+            accounts.add(BankActions.createNewAccount(i, customerId, fromAccountId));
         }
         return accounts;
     }
-
 }

@@ -15,10 +15,10 @@ public class LoginTest extends BaseUiTest {
     @Test(groups = { "ui", "smoke" })
     public void login() {
         Customer customer = TestDataGenerator.getLoginCustomer();
-        LandingPage landingPage = new LandingPage(driver);
+        LandingPage landingPage = new LandingPage(getDriver());
 
-        driver.get(ConfigReader.get("LANDING_PAGE_URL"));
-        new LoginPage(driver).loginCustomer(customer);
+        getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
+        new LoginPage(getDriver()).loginCustomer(customer);
         landingPage.confirmLandingPageURL();
         landingPage.confirmLandingPageTitle();
     }

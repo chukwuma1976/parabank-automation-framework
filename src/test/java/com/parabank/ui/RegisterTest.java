@@ -15,9 +15,9 @@ public class RegisterTest extends BaseUiTest {
 
     @Test(groups = { "ui", "regression" })
     public void registerUser() {
-        RegistrationPage registrationPage = new RegistrationPage(driver);
-        LeftNavComponent leftNavComponent = new LeftNavComponent(driver);
-        UpdateProfilePage updateProfilePage = new UpdateProfilePage(driver);
+        RegistrationPage registrationPage = new RegistrationPage(getDriver());
+        LeftNavComponent leftNavComponent = new LeftNavComponent(getDriver());
+        UpdateProfilePage updateProfilePage = new UpdateProfilePage(getDriver());
         String username = "UN" + System.currentTimeMillis();
         String password = "PW" + System.currentTimeMillis();
 
@@ -33,7 +33,7 @@ public class RegisterTest extends BaseUiTest {
                 username,
                 password);
 
-        driver.get(ConfigReader.get("LANDING_PAGE_URL"));
+        getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
 
         registrationPage.clickRegistrationLink();
         registrationPage.fillRegistrationForm(customer);

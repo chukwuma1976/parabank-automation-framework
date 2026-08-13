@@ -16,15 +16,15 @@ public class LogoutTest extends BaseUiTest {
     @Test(groups = { "ui", "smoke" })
     public void login() {
         Customer customer = TestDataGenerator.getLoginCustomer();
-        LandingPage landingPage = new LandingPage(driver);
-        LoginPage loginPage = new LoginPage(driver);
+        LandingPage landingPage = new LandingPage(getDriver());
+        LoginPage loginPage = new LoginPage(getDriver());
 
-        driver.get(ConfigReader.get("LANDING_PAGE_URL"));
+        getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
         loginPage.loginCustomer(customer);
         landingPage.confirmLandingPageURL();
         landingPage.confirmLandingPageTitle();
 
-        new LeftNavComponent(driver).clickLogOut();
+        new LeftNavComponent(getDriver()).clickLogOut();
 
         loginPage.confirmLoginPageURL();
 

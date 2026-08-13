@@ -6,17 +6,19 @@ import org.testng.annotations.Test;
 
 import com.parabank.base.BaseApiTest;
 import com.parabank.config.ConfigReader;
+import com.parabank.model.Customer;
 
 import io.restassured.response.Response;
+import utils.AccountApi;
 import utils.BankActions;
-import utils.DataControl;
+import utils.RegistrationApi;
 import utils.TestDataGenerator;
 import static io.restassured.RestAssured.given;
 
 public class StockExchangeTest extends BaseApiTest {
     private String baseURL = ConfigReader.get("BASE_API_URL");
-    private int customerId = TestDataGenerator.getCustomerId();
-    private int accountId = TestDataGenerator.getAccountId();
+    private int customerId;
+    private int accountId;
     private String stockName = "stock";
     private int numberOfShares = 100;
     private int priceOfShares = 15;
@@ -26,7 +28,9 @@ public class StockExchangeTest extends BaseApiTest {
 
     @BeforeMethod
     public void setUp() {
-        DataControl.resetData();
+        Customer customer = RegistrationApi.registerAndAuthenticate(TestDataGenerator.generateCustomer()).getCustomer();
+        customerId = AccountApi.getCustomerId(customer.getUsername(), customer.getPassword());
+        accountId = AccountApi.getFirstAccount(customerId).getId();
         initialBalance = BankActions.getBalance(accountId);
     }
 

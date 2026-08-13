@@ -5,26 +5,31 @@ import org.testng.annotations.Test;
 
 import com.parabank.base.BaseApiTest;
 import com.parabank.config.ConfigReader;
+import com.parabank.model.Customer;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
 import static org.testng.Assert.*;
 
-import utils.DataControl;
+import utils.RegistrationApi;
 import utils.TestDataGenerator;
+import utils.AccountApi;
 import utils.BankActions;
 
 public class TransactionsTest extends BaseApiTest {
         private String baseURL = ConfigReader.get("BASE_API_URL");
-        private int customerId = TestDataGenerator.getCustomerId();
-        private int accountId = TestDataGenerator.getAccountId();
+        private int customerId;
+        private int accountId;
 
         private double initialBalance;
 
         @BeforeMethod
         public void setUp() {
-                DataControl.resetData();
+                Customer customer = RegistrationApi.registerAndAuthenticate(TestDataGenerator.generateCustomer())
+                                .getCustomer();
+                customerId = AccountApi.getCustomerId(customer.getUsername(), customer.getPassword());
+                accountId = AccountApi.getFirstAccount(customerId).getId();
                 initialBalance = BankActions.getBalance(accountId);
         }
 

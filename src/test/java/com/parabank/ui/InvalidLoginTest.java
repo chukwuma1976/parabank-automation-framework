@@ -26,10 +26,10 @@ public class InvalidLoginTest extends BaseUiTest {
 
     @Test(dataProvider = "invalidCredentials", groups = { "ui", "regression" })
     public void loginWithInvalidCredentials(String username, String password) {
-        LoginPage loginPage = new LoginPage(driver);
+        LoginPage loginPage = new LoginPage(getDriver());
         Customer customer = new Customer(username, password);
 
-        driver.get(ConfigReader.get("LANDING_PAGE_URL"));
+        getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
 
         loginPage.loginCustomer(customer);
         loginPage.verifyErrorMessageDisplayed();

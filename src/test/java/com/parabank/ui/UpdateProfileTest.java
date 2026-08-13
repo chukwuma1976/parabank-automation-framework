@@ -16,8 +16,8 @@ public class UpdateProfileTest extends BaseUiTest {
         AuthenticatedUser authUser = loginAsNewUser();
         Customer customer = TestDataGenerator.getCustomerData(authUser);
 
-        LeftNavComponent navComponent = new LeftNavComponent(driver);
-        UpdateProfilePage updateProfilePage = new UpdateProfilePage(driver);
+        LeftNavComponent navComponent = new LeftNavComponent(getDriver());
+        UpdateProfilePage updateProfilePage = new UpdateProfilePage(getDriver());
 
         navComponent.clickUpdateContactInfo();
         updateProfilePage.confirmPresenceOfValuesInInputFields(customer);

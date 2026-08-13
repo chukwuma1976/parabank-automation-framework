@@ -8,10 +8,6 @@ import org.testng.asserts.SoftAssert;
 import com.parabank.base.BaseUiTest;
 import com.parabank.component.LeftNavComponent;
 import com.parabank.config.ConfigReader;
-import com.parabank.model.Customer;
-import com.parabank.pages.LoginPage;
-
-import utils.TestDataGenerator;
 
 public class NavigationTest extends BaseUiTest {
 
@@ -19,10 +15,10 @@ public class NavigationTest extends BaseUiTest {
 
     @BeforeMethod
     public void setUp() {
-        Customer customer = TestDataGenerator.getLoginCustomer();
-        navComponent = new LeftNavComponent(driver);
-        driver.get(ConfigReader.get("LANDING_PAGE_URL"));
-        new LoginPage(driver).loginCustomer(customer);
+        navComponent = new LeftNavComponent(getDriver());
+
+        loginAsNewUser();
+        getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
     }
 
     @Test(groups = { "ui", "regression" })

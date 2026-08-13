@@ -1,6 +1,7 @@
 package com.parabank.base;
 
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.time.Duration;
 
 import io.qameta.allure.Allure;
@@ -28,10 +29,16 @@ import com.parabank.model.Customer;
 
 public class BaseUiTest {
 
-    protected WebDriver driver;
+    private static final ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
     protected static final Logger log = LoggerFactory.getLogger(BaseUiTest.class);
 
-    private long startTime;
+    // ThreadLocal too, since parallel threads would otherwise stomp on one shared
+    // startTime
+    private static final ThreadLocal<Long> startTimeThreadLocal = new ThreadLocal<>();
+
+    protected WebDriver getDriver() {
+        return driverThreadLocal.get();
+    }
 
     @BeforeMethod(alwaysRun = true)
     public void setUp(ITestResult testInfo) {
@@ -50,13 +57,13 @@ public class BaseUiTest {
             options.addArguments("--start-maximized");
         }
 
-        driver = new ChromeDriver(options);
+        driverThreadLocal.set(new ChromeDriver(options));
 
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(0));
+        getDriver().manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(0));
 
         // Logging
-        startTime = System.currentTimeMillis();
+        startTimeThreadLocal.set(System.currentTimeMillis());
         MDC.put("testName", testInfo.getMethod().getMethodName());
         log.info("========== START TEST ==========");
 
@@ -68,6 +75,8 @@ public class BaseUiTest {
 
     @AfterMethod(alwaysRun = true)
     public void tearDown(ITestResult testInfo) {
+
+        WebDriver driver = getDriver();
 
         // Attach screenshot if test failed
         if (ITestResult.FAILURE == testInfo.getStatus() && driver != null) {
@@ -91,7 +100,7 @@ public class BaseUiTest {
         }
 
         // Logging
-        long duration = System.currentTimeMillis() - startTime;
+        long duration = System.currentTimeMillis() - startTimeThreadLocal.get();
         log.info("========== END TEST ({} ms) ==========", duration);
         MDC.clear();
 
@@ -102,6 +111,12 @@ public class BaseUiTest {
         if (driver != null) {
             driver.quit();
         }
+
+        // Critical: remove the reference once the thread is done with this test,
+        // so a reused thread from TestNG's pool doesn't hand the next test a stale/quit
+        // driver
+        driverThreadLocal.remove();
+        startTimeThreadLocal.remove();
     }
 
     protected AuthenticatedUser loginAsNewUser() {
@@ -110,7 +125,9 @@ public class BaseUiTest {
         AuthenticatedUser authUser = RegistrationApi.registerAndAuthenticate(customer);
 
         String baseUiUrl = ConfigReader.get("BASE_UI_URL");
-        java.net.URI uri = java.net.URI.create(baseUiUrl);
+        URI uri = URI.create(baseUiUrl);
+
+        WebDriver driver = getDriver();
 
         driver.get(baseUiUrl + "/index.htm");
         driver.manage().deleteAllCookies();

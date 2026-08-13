@@ -10,15 +10,18 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.parabank.base.BaseApiTest;
+import com.parabank.model.Account;
+import com.parabank.model.Customer;
 import com.parabank.model.Transaction;
 
-import io.restassured.path.json.JsonPath;
+import utils.AccountApi;
 import utils.BankActions;
-import utils.DataControl;
+import utils.RegistrationApi;
 import utils.TestDataGenerator;
 
 public class TrackTransactionsTest extends BaseApiTest {
-    int accountId = TestDataGenerator.getAccountId();
+    int accountId;
+    int customerId;
 
     double deposit = 100000;
     double withdrawal = 5000;
@@ -26,7 +29,9 @@ public class TrackTransactionsTest extends BaseApiTest {
 
     @BeforeMethod
     public void setUp() {
-        DataControl.resetData();
+        Customer customer = RegistrationApi.registerAndAuthenticate(TestDataGenerator.generateCustomer()).getCustomer();
+        customerId = AccountApi.getCustomerId(customer.getUsername(), customer.getPassword());
+        accountId = AccountApi.getFirstAccount(customerId).getId();
     }
 
     @Test(groups = { "api", "regression" })
@@ -35,22 +40,22 @@ public class TrackTransactionsTest extends BaseApiTest {
         double initialBalance = BankActions.getBalance(accountId);
 
         // Deposit some money -- transaction
-        BankActions.depositMoney(deposit);
+        BankActions.depositMoney(accountId, deposit);
 
         // Get new balance and document that the balance has increased accordingly
         double balanceAfterDeposit = BankActions.getBalance(accountId);
         assertEquals(deposit, diff(balanceAfterDeposit, initialBalance));
 
         // Withdraw some money -- transaction
-        BankActions.withdrawMoney(withdrawal);
+        BankActions.withdrawMoney(accountId, withdrawal);
 
         // Get new balance and document that the balance has decreased accordingly
         double balanceAfterWithdrawal = BankActions.getBalance(accountId);
         assertEquals(withdrawal, diff(balanceAfterDeposit, balanceAfterWithdrawal));
 
         // Create a savings account since now you have some real money
-        JsonPath newSavingsAccount = BankActions.createNewAccount(1);
-        int savingsAccountId = newSavingsAccount.get("id");
+        Account newSavingsAccount = BankActions.createNewAccount(1, customerId, accountId);
+        int savingsAccountId = newSavingsAccount.getId();
 
         /*
          * Document the new balance since creating an account requires a minimum balance
@@ -74,7 +79,7 @@ public class TrackTransactionsTest extends BaseApiTest {
 
         // Assert that there are at least 4 new transactions
         List<Transaction> transactions = BankActions.getTransactionList(accountId);
-        assertTrue(transactions.size() == 4);
+        assertTrue(transactions.size() >= 4);
 
         // With the transaction list assert that transaction exists based on amounts
         List<Double> transactionAmounts = List.of(deposit, withdrawal, minimumReqAmtInSavings, transferMoney);
