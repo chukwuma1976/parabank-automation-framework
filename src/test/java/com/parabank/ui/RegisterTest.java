@@ -33,7 +33,6 @@ public class RegisterTest extends BaseUiTest {
                 username,
                 password);
 
-        System.out.println("LANDING_PAGE_URL: " + ConfigReader.get("LANDING_PAGE_URL"));
         driver.get(ConfigReader.get("LANDING_PAGE_URL"));
 
         registrationPage.clickRegistrationLink();

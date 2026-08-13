@@ -28,7 +28,7 @@ public class TransactionsTest extends BaseApiTest {
                 initialBalance = BankActions.getBalance(accountId);
         }
 
-        @Test(groups = { "ui", "regression" })
+        @Test(groups = { "api", "regression" })
         public void testBillPay() {
                 int amountToPay = 1200;
                 String requestPayload = TestDataGenerator.getPayee();

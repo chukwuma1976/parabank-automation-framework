@@ -9,6 +9,7 @@ import java.util.Set;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.parabank.base.BaseApiTest;
 import com.parabank.model.Transaction;
 
 import io.restassured.path.json.JsonPath;
@@ -16,7 +17,7 @@ import utils.BankActions;
 import utils.DataControl;
 import utils.TestDataGenerator;
 
-public class TrackTransactionsTest {
+public class TrackTransactionsTest extends BaseApiTest {
     int accountId = TestDataGenerator.getAccountId();
 
     double deposit = 100000;
@@ -28,7 +29,7 @@ public class TrackTransactionsTest {
         DataControl.resetData();
     }
 
-    @Test(groups = { "ui", "regression" })
+    @Test(groups = { "api", "regression" })
     public void testMultipleTransactions() {
         // Get initial balance
         double initialBalance = BankActions.getBalance(accountId);

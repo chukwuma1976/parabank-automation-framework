@@ -4,6 +4,7 @@ import static org.testng.Assert.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.parabank.base.BaseApiTest;
 import com.parabank.config.ConfigReader;
 
 import io.restassured.response.Response;
@@ -12,7 +13,7 @@ import utils.DataControl;
 import utils.TestDataGenerator;
 import static io.restassured.RestAssured.given;
 
-public class StockExchangeTest {
+public class StockExchangeTest extends BaseApiTest {
     private String baseURL = ConfigReader.get("BASE_API_URL");
     private int customerId = TestDataGenerator.getCustomerId();
     private int accountId = TestDataGenerator.getAccountId();
@@ -29,7 +30,7 @@ public class StockExchangeTest {
         initialBalance = BankActions.getBalance(accountId);
     }
 
-    @Test(groups = { "ui", "regression" })
+    @Test(groups = { "api", "regression" })
     public void testStockExchange() {
 
         // Purchase 100 shares of stock at $15/share
