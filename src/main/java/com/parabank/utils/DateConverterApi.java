@@ -1,4 +1,4 @@
-package utils;
+package com.parabank.utils;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-public class DateConverter {
+public class DateConverterApi {
 
     private static final DateTimeFormatter MM_DD_YYYY = DateTimeFormatter.ofPattern("MM-dd-yyyy");
     private static final DateTimeFormatter MM_DD_YYYY_HH_MM_SS = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
