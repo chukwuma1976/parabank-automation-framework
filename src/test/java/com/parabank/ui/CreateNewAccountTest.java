@@ -47,7 +47,7 @@ public class CreateNewAccountTest extends BaseUiTest {
     @Test(groups = { "ui", "regression" })
     public void createAccounts() {
         for (Account account : createdAccounts) {
-            getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
+            getDriver().get(ConfigReader.get("BASE_UI_URL") + "/overview.htm");
 
             String accountType = account.getType();
             int accountId = account.getId();

@@ -17,7 +17,7 @@ public class LoginTest extends BaseUiTest {
         Customer customer = TestDataGenerator.getLoginCustomer();
         LandingPage landingPage = new LandingPage(getDriver());
 
-        getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
+        getDriver().get(ConfigReader.get("BASE_UI_URL") + "/overview.htm");
         new LoginPage(getDriver()).loginCustomer(customer);
         landingPage.confirmLandingPageURL();
         landingPage.confirmLandingPageTitle();

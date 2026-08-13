@@ -19,7 +19,7 @@ public class LogoutTest extends BaseUiTest {
         LandingPage landingPage = new LandingPage(getDriver());
         LoginPage loginPage = new LoginPage(getDriver());
 
-        getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
+        getDriver().get(ConfigReader.get("BASE_UI_URL") + "/overview.htm");
         loginPage.loginCustomer(customer);
         landingPage.confirmLandingPageURL();
         landingPage.confirmLandingPageTitle();

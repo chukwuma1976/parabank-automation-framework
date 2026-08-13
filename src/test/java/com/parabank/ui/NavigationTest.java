@@ -18,7 +18,7 @@ public class NavigationTest extends BaseUiTest {
         navComponent = new LeftNavComponent(getDriver());
 
         loginAsNewUser();
-        getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
+        getDriver().get(ConfigReader.get("BASE_UI_URL") + "/overview.htm");
     }
 
     @Test(groups = { "ui", "regression" })

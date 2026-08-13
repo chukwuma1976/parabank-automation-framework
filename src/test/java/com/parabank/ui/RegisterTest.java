@@ -33,7 +33,7 @@ public class RegisterTest extends BaseUiTest {
                 username,
                 password);
 
-        getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
+        getDriver().get(ConfigReader.get("BASE_UI_URL") + "/overview.htm");
 
         registrationPage.clickRegistrationLink();
         registrationPage.fillRegistrationForm(customer);

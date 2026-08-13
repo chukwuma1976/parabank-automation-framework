@@ -29,7 +29,7 @@ public class InvalidLoginTest extends BaseUiTest {
         LoginPage loginPage = new LoginPage(getDriver());
         Customer customer = new Customer(username, password);
 
-        getDriver().get(ConfigReader.get("LANDING_PAGE_URL"));
+        getDriver().get(ConfigReader.get("BASE_UI_URL") + "/overview.htm");
 
         loginPage.loginCustomer(customer);
         loginPage.verifyErrorMessageDisplayed();
