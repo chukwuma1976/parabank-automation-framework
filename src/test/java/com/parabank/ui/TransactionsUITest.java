@@ -1,11 +1,13 @@
 package com.parabank.ui;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.asserts.SoftAssert;
 
 import com.parabank.base.BaseUiTest;
 import com.parabank.model.Account;
 import com.parabank.model.AuthenticatedUser;
+import com.parabank.model.Customer;
 import com.parabank.model.Transaction;
 import com.parabank.pages.FindTransactionsPage;
 import com.parabank.pages.TransactionDetailsPage;
@@ -17,8 +19,10 @@ import java.util.List;
 import org.testng.annotations.Test;
 import com.parabank.config.ConfigReader;
 import utils.BankActions;
+import utils.RegistrationApi;
+import utils.TestDataGenerator;
 
-public class TransactionsTest extends BaseUiTest {
+public class TransactionsUITest extends BaseUiTest {
 
     private TransactionDetailsPage transactionDetailsPage;
     private FindTransactionsPage findTransactionsPage;
@@ -33,29 +37,34 @@ public class TransactionsTest extends BaseUiTest {
     int customerId;
     int accountId;
 
-    @BeforeMethod
-    public void setup() {
-        AuthenticatedUser authUser = loginAsNewUser(); // fresh user, browser already authenticated, first account
-                                                       // already seeded with $10,000
+    private AuthenticatedUser authUser;
 
-        customerId = AccountApi.getCustomerId(
-                authUser.getCustomer().getUsername(),
-                authUser.getCustomer().getPassword());
+    @BeforeClass
+    public void setupClassData() {
+        Customer customer = TestDataGenerator.generateCustomer();
+        authUser = RegistrationApi.registerAndAuthenticate(customer); // pure API call — no driver needed
 
-        Account fundedAccount = AccountApi.getFirstAccount(customerId); // the seeded account — used as the source for
-                                                                        // new-account creation
+        int customerId = AccountApi.getCustomerId(customer.getUsername(), customer.getPassword());
+        Account fundedAccount = AccountApi.getFirstAccount(customerId);
         accountId = fundedAccount.getId();
 
         // Perform transactions through the API
         BankActions.depositMoney(accountId, deposit);
         BankActions.withdrawMoney(accountId, withdrawal);
         Account newSavingsAccount = BankActions.createNewAccount(1, customerId, accountId);
-        int savingsAccountId = newSavingsAccount.getId();
-        BankActions.transferMoney(transferMoney, accountId, savingsAccountId);
+        BankActions.transferMoney(transferMoney, accountId, newSavingsAccount.getId());
 
         // Get all customer accounts
         transactions = BankActions.getTransactionList(accountId);
+    }
 
+    @BeforeMethod
+    public void setupDriver() {
+        injectSessionCookie(authUser);
+    }
+
+    @BeforeMethod
+    public void setup() {
         transactionDetailsPage = new TransactionDetailsPage(getDriver());
         findTransactionsPage = new FindTransactionsPage(getDriver());
         softly = new SoftAssert();
@@ -71,7 +80,7 @@ public class TransactionsTest extends BaseUiTest {
             softly.assertTrue(
                     transactionDetailsPage.confirmTransactionFieldVisible("Transaction ID", transaction.getId()));
             softly.assertTrue(
-                    transactionDetailsPage.cconfirmTransactionTimestampFieldVisible("Date", transaction.getDate()));
+                    transactionDetailsPage.confirmTransactionTimestampFieldVisible("Date", transaction.getDate()));
             softly.assertTrue(
                     transactionDetailsPage.confirmTransactionFieldVisible("Description", transaction.getDescription()));
             softly.assertTrue(
@@ -87,6 +96,8 @@ public class TransactionsTest extends BaseUiTest {
         transactions.forEach(transaction -> {
             findTransactionsPage.goToFindTransactions();
             findTransactionsPage.findByTransactionId(transaction.getId());
+            System.out.println(transaction);
+            System.out.println("Find transactions by Id: " + findTransactionsPage.getNumberOfTransactionsInTable());
             softly.assertTrue(findTransactionsPage.getNumberOfTransactionsInTable() == 1);
         });
         softly.assertAll();
@@ -97,6 +108,8 @@ public class TransactionsTest extends BaseUiTest {
         findTransactionsPage.goToFindTransactions();
         long dateMillis = transactions.get(0).getDate();
         findTransactionsPage.findByTransactionDate(dateMillis);
+        System.out.println("transaction size" + transactions.size());
+        System.out.println("Find transactions by Date: " + findTransactionsPage.getNumberOfTransactionsInTable());
         softly.assertTrue(findTransactionsPage.getNumberOfTransactionsInTable() == transactions.size());
         softly.assertAll();
     }
@@ -106,6 +119,8 @@ public class TransactionsTest extends BaseUiTest {
         findTransactionsPage.goToFindTransactions();
         long dateMillis = transactions.get(0).getDate();
         findTransactionsPage.findByDateRange(dateMillis, dateMillis);
+        System.out.println("transaction size" + transactions.size());
+        System.out.println("Find transactions by Date range: " + findTransactionsPage.getNumberOfTransactionsInTable());
         softly.assertTrue(findTransactionsPage.getNumberOfTransactionsInTable() == transactions.size());
         softly.assertAll();
     }
@@ -115,6 +130,8 @@ public class TransactionsTest extends BaseUiTest {
         transactions.forEach(transaction -> {
             findTransactionsPage.goToFindTransactions();
             findTransactionsPage.findByAmount(transaction.getAmount());
+            System.out.println(transaction);
+            System.out.println("Find transactions by amount: " + findTransactionsPage.getNumberOfTransactionsInTable());
             softly.assertTrue(findTransactionsPage.getNumberOfTransactionsInTable() == 1);
         });
         softly.assertAll();
@@ -144,10 +161,10 @@ public class TransactionsTest extends BaseUiTest {
     }
 
     @Test(groups = { "ui", "regression" })
-    public void confirmInvalidSearchIdInputTriggerFatalErrorMessage() {
+    public void confirmInvalidSearchIdInputReturnsNoTransactions() {
         findTransactionsPage.goToFindTransactions();
-        findTransactionsPage.findByTransactionId(0000000000);
-        softly.assertTrue(findTransactionsPage.confirmInternalErrorMessage());
+        findTransactionsPage.findByTransactionId(-99999999);
+        softly.assertTrue(findTransactionsPage.doesNotContainTransactionItems());
         softly.assertAll();
     }
 

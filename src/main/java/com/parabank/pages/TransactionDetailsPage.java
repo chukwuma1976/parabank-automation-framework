@@ -48,7 +48,7 @@ public class TransactionDetailsPage {
         return retrieveTransactionField(fieldName).getText().contains(convertedValue);
     }
 
-    public boolean cconfirmTransactionTimestampFieldVisible(String fieldName, long value) {
+    public boolean confirmTransactionTimestampFieldVisible(String fieldName, long value) {
         String convertedValue = convertTimestampToString(value);
         return retrieveTransactionField(fieldName).getText().contains(convertedValue);
     }

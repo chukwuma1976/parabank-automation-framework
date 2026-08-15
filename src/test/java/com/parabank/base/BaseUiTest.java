@@ -149,4 +149,31 @@ public class BaseUiTest {
 
         return authUser;
     }
+
+    protected void injectSessionCookie(AuthenticatedUser authUser) {
+        String baseUiUrl = ConfigReader.get("BASE_UI_URL");
+        URI uri = URI.create(baseUiUrl);
+
+        WebDriver driver = getDriver(); // safe here — this only ever gets called from a @BeforeMethod, after setUp()
+                                        // has run
+
+        driver.get(baseUiUrl + "/index.htm");
+        driver.manage().deleteAllCookies();
+
+        Cookie sessionCookie = new Cookie.Builder("JSESSIONID", authUser.getSessionId())
+                .domain(uri.getHost())
+                .path("/parabank")
+                .isSecure(uri.getScheme().equals("https"))
+                .build();
+
+        driver.manage().addCookie(sessionCookie);
+        driver.navigate().refresh();
+        driver.get(baseUiUrl + "/overview.htm");
+
+        if (driver.getPageSource().contains("Customer Login")) {
+            throw new RuntimeException(
+                    "Session cookie injection failed — still on login page for user: "
+                            + authUser.getCustomer().getUsername());
+        }
+    }
 }

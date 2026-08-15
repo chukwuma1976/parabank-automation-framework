@@ -2,6 +2,9 @@ package utils;
 
 import static io.restassured.RestAssured.given;
 
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import com.parabank.config.ConfigReader;
 
 public class DataControl {
@@ -17,6 +20,16 @@ public class DataControl {
         given().baseUri(baseURL)
                 .when().post("/initializeDB")
                 .then().statusCode(204);
+    }
+
+    public static void waitForAjaxToComplete(WebDriverWait wait) {
+
+        wait.until(driver -> {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            Object activeRequests = js.executeScript(
+                    "return (typeof jQuery !== 'undefined') ? jQuery.active : 0");
+            return ((Long) activeRequests) == 0;
+        });
     }
 
 }

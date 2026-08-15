@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.parabank.config.ConfigReader;
 import com.parabank.utils.DateConverterApi;
+import com.parabank.utils.PageUtility;
 
 public class FindTransactionsPage {
     private WebDriver driver;
@@ -53,6 +54,7 @@ public class FindTransactionsPage {
     public void submitById(By button) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(button));
         driver.findElement(button).click();
+        PageUtility.waitForAjaxToComplete(wait); // don't move on until the search's AJAX call has actually resolved
     }
 
     public void findByTransactionId(int id) {
@@ -77,10 +79,13 @@ public class FindTransactionsPage {
     }
 
     public int getNumberOfTransactionsInTable() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(transactionTable));
+        wait.until(ExpectedConditions.presenceOfElementLocated(transactionTable));
         WebElement table = driver.findElement(transactionTable);
-        List<WebElement> transactions = table.findElements(By.tagName("tr"));
-        return transactions.size();
+        return table.findElements(By.tagName("tr")).size();
+    }
+
+    public boolean doesNotContainTransactionItems() {
+        return getNumberOfTransactionsInTable() == 0;
     }
 
     public Map<String, By> getErrorsFromEmptyInputMap() {
