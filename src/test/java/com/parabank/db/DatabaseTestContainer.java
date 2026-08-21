@@ -4,11 +4,11 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 public class DatabaseTestContainer {
 
-    @SuppressWarnings("resource")
+    @SuppressWarnings({ "resource", "deprecation" })
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("parabank_test")
-            .withUsername("test")
-            .withPassword("test")
+            .withUsername("postgres")
+            .withPassword("postgres")
             .withInitScript("db/schema.sql"); // runs automatically on container startup
 
     public static void start() {
