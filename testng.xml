@@ -24,4 +24,14 @@
             <class name="com.parabank.db.AccountBalanceTest"/>
         </classes>
     </test>
+    <test name="Security">
+        <classes>
+            <class name="com.parabank.security.api.HttpMethods"/>
+            <class name="com.parabank.security.api.PathTraversal"/>
+            <class name="com.parabank.security.api.SecurityHeaders"/>
+            <class name="com.parabank.security.api.SqlAndXssInjection"/>
+            <class name="com.parabank.security.ui.SqlInjection"/>
+            <class name="com.parabank.security.ui.XssInjection"/>
+        </classes>
+    </test>
 </suite>

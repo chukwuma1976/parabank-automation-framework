@@ -4,7 +4,7 @@ Feature: Common Bank Operations API
     * url baseUrl
     * def customerId = 12212
     * def accountId = 13344
-    * configure afterScenario = function(){ karate.call('classpath:api/cleanup.feature') }
+    * configure afterScenario = function(){ karate.call('cleanup.feature') }
 
   Scenario Outline: Create different types of bank accounts
     Given path 'createAccount'

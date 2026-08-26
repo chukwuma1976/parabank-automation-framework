@@ -4,16 +4,18 @@ Feature: Common Bank Operations API
     * url baseUrl
     * def customerId = 12212
     * def accountId = 13344
-    * configure afterScenario = function(){ karate.call('classpath:api/cleanup.feature') }
+    * configure afterScenario = function(){ karate.call('cleanup.feature') }
 
   Scenario: Request a loan from the bank
     Given path 'requestLoan'
     * def loanAmount = 2000
     * def downPayment = 400
+    * def newAccount = call read('createAccount.feature')
+    * def newAccountId = newAccount.newAccountId
     And param customerId = customerId
     And param amount = loanAmount
     And param downPayment = downPayment
-    And param fromAccountId = accountId
+    And param fromAccountId = newAccountId
     And header Accept = 'application/json'
     When method post
     Then status 200

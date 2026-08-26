@@ -36,4 +36,17 @@ public class LandingPage {
         wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(acctNum));
         driver.findElement(acctNum).click();
     }
+
+    public void confirmYouHaveBeenBlocked() {
+        By pageBlocked = By.cssSelector("h1[data-translate='block_headline']");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(pageBlocked));
+        assert (driver.findElement(pageBlocked)).isDisplayed();
+    }
+
+    public void confirmPerformingSecurityVerification() {
+        By securityVerification = By.xpath("//h2[text()='Performing security verification']");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(securityVerification));
+        assert (driver.findElement(securityVerification)).isDisplayed();
+    }
+
 }

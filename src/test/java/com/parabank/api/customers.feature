@@ -3,7 +3,7 @@ Feature: Test Customers API
   Background:
     * url baseUrl
     * def customerId = 12212
-    * configure afterScenario = function(){ karate.call('classpath:api/cleanup.feature') }
+    * configure afterScenario = function(){ karate.call('cleanup.feature') }
   Scenario: Get customer accounts by customer id
     Given path 'customers', customerId, 'accounts'
     And header Accept = 'application/json'

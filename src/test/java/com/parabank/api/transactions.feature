@@ -5,7 +5,7 @@ Feature: Common Bank Operations API
     * def customerId = 12212
     * def accountId = 13344
     * def months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-    * configure afterScenario = function(){ karate.call('classpath:api/cleanup.feature') }
+    * configure afterScenario = function(){ karate.call('cleanup.feature') }
 
   Scenario: Perform a transaction (money withdrawal) from account and retrieve in a multitude of ways as listed below
     # Reset the database to a clean state before performing the transaction

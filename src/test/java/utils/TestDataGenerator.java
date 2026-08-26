@@ -96,4 +96,18 @@ public class TestDataGenerator {
         return AccountApi.getFirstAccount(customerId);
     }
 
+    public static List<String> getListOfSecurityHeaders() {
+        List<String> securityHeaders = new ArrayList<>();
+        securityHeaders.add("x-content-type-options");
+        securityHeaders.add("strict-transport-security");
+        securityHeaders.add("content-security-policy");
+        securityHeaders.add("x-frame-options");
+        securityHeaders.add("cache-control");
+        securityHeaders.add("referrer-policy"); // controls how much URL data leaks to third parties on outbound links
+        securityHeaders.add("permissions-policy"); // restricts browser feature access (camera, geolocation, etc.)
+        securityHeaders.add("x-xss-protection"); // legacy XSS filter toggle — deprecated by modern browsers in favor of
+                                                 // CSP, but still worth checking as some older clients respect it
+        return securityHeaders;
+    }
+
 }
