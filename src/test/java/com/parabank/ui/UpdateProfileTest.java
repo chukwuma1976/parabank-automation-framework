@@ -10,7 +10,7 @@ import com.parabank.pages.UpdateProfilePage;
 import utils.TestDataGenerator;
 
 public class UpdateProfileTest extends BaseUiTest {
-    @Test(groups = { "api", "regression" })
+    @Test(groups = { "ui", "regression" })
     public void registerUser() {
 
         AuthenticatedUser authUser = loginAsNewUser();

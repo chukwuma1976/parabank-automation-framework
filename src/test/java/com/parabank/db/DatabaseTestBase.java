@@ -1,12 +1,16 @@
 package com.parabank.db;
 
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeClass;
 
 public class DatabaseTestBase {
 
-    @BeforeSuite(alwaysRun = true)
+    @BeforeClass(alwaysRun = true)
     public void startDatabase() {
-        DatabaseTestContainer.start();
+        try {
+            DatabaseTestContainer.start();
+        } catch (IllegalStateException e) {
+            throw new org.testng.SkipException("Docker unavailable — skipping database tests: " + e.getMessage());
+        }
     }
 
     // no explicit @AfterSuite stop() call needed —

@@ -13,7 +13,7 @@ import utils.TestDataGenerator;
 
 public class LogoutTest extends BaseUiTest {
 
-    @Test(groups = { "ui", "smoke" })
+    @Test(groups = { "ui", "smoke", "regression" })
     public void login() {
         Customer customer = TestDataGenerator.getLoginCustomer();
         LandingPage landingPage = new LandingPage(getDriver());
