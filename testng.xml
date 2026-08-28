@@ -1,0 +1,37 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Automation Suite" parallel = "method" thread-count = "4">
+    <test name="Integration">
+        <classes>
+            <class name="com.parabank.integration.StockExchangeTest"/>
+            <class name="com.parabank.integration.TrackTransactionsTest"/>
+            <class name="com.parabank.integration.TransactionsTest"/>
+        </classes>
+    </test>
+    <test name="UI">
+        <classes>
+            <class name="com.parabank.ui.CreateNewAccountTest"/>
+            <class name="com.parabank.ui.InvalidLoginTest"/>
+            <class name="com.parabank.ui.LoginTest"/>
+            <class name="com.parabank.ui.LogoutTest"/>
+            <class name="com.parabank.ui.NavigationTest"/>
+            <class name="com.parabank.ui.RegisterTest"/>
+            <class name="com.parabank.ui.TransactionsUITest"/>
+            <class name="com.parabank.ui.UpdateProfileTest"/>
+        </classes>
+    </test>
+    <test name="Database">
+        <classes>
+            <class name="com.parabank.db.AccountBalanceTest"/>
+        </classes>
+    </test>
+    <test name="Security">
+        <classes>
+            <class name="com.parabank.security.api.HttpMethods"/>
+            <class name="com.parabank.security.api.PathTraversal"/>
+            <class name="com.parabank.security.api.SecurityHeaders"/>
+            <class name="com.parabank.security.api.SqlAndXssInjection"/>
+            <class name="com.parabank.security.ui.SqlInjection"/>
+            <class name="com.parabank.security.ui.XssInjection"/>
+        </classes>
+    </test>
+</suite>
